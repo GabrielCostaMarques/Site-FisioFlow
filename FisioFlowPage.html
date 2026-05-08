@@ -1,0 +1,3035 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FisioFlow — Gestão inteligente para fisioterapia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ===================== TOKENS ===================== */
+        :root {
+            --petrol: #0F4C75;
+            --petrol-dark: #0a3557;
+            --petrol-mid: #1A6496;
+            --green: #2E8B57;
+            --green-light: #e8f5ee;
+            --amber: #F59E0B;
+            --amber-dark: #d97706;
+            --bg: #F4F6F9;
+            --white: #ffffff;
+            --ink: #1A1A2E;
+            --ink2: #4A5568;
+            --ink3: #718096;
+            --border: #e2e8f0;
+            --radius: 16px;
+            --radius-sm: 8px;
+            --shadow: 0 4px 24px rgba(15, 76, 117, 0.10);
+            --shadow-md: 0 8px 40px rgba(15, 76, 117, 0.14);
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'DM Sans', sans-serif;
+        }
+
+        /* ===================== RESET ===================== */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--ink);
+            background: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        /* ===================== UTILS ===================== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .section {
+            padding: 96px 0;
+        }
+
+        .section-alt {
+            background: var(--bg);
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 100px;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-family: var(--font-display);
+            font-weight: 500;
+            backdrop-filter: blur(8px);
+        }
+
+        .tag-dark {
+            background: rgba(15, 76, 117, 0.08);
+            color: var(--petrol);
+            border-color: rgba(15, 76, 117, 0.15);
+        }
+
+        .section-label {
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--petrol);
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(30px, 3.5vw, 42px);
+            font-weight: 800;
+            line-height: 1.15;
+            color: var(--ink);
+            margin-bottom: 16px;
+        }
+
+        .section-sub {
+            font-size: 18px;
+            color: var(--ink2);
+            max-width: 560px;
+            line-height: 1.6;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .center .section-sub {
+            margin: 0 auto;
+        }
+
+        /* ===================== BUTTONS ===================== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 15px;
+            border-radius: var(--radius-sm);
+            padding: 13px 24px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-amber {
+            background: var(--amber);
+            color: var(--white);
+        }
+
+        .btn-amber:hover {
+            background: var(--amber-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35);
+        }
+
+        .btn-amber-lg {
+            padding: 16px 32px;
+            font-size: 17px;
+            border-radius: 10px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--petrol);
+            border: 1.5px solid var(--petrol);
+        }
+
+        .btn-outline:hover {
+            background: var(--petrol);
+            color: #fff;
+        }
+
+        .btn-ghost-white {
+            background: transparent;
+            color: #fff;
+            border: 1.5px solid rgba(255, 255, 255, 0.35);
+        }
+
+        .btn-ghost-white:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .btn-outline-white {
+            background: transparent;
+            color: #fff;
+            border: 1.5px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .btn-outline-white:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ===================== NAVBAR ===================== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            transition: box-shadow 0.3s;
+        }
+
+        .navbar.scrolled {
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .navbar-inner {
+            display: flex;
+            align-items: center;
+            height: 64px;
+            gap: 40px;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 20px;
+            color: var(--petrol);
+            flex-shrink: 0;
+        }
+
+        .nav-logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--petrol);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-logo-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            margin: 0 auto;
+        }
+
+        .nav-links a {
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--ink2);
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--petrol);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .nav-login {
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--ink2);
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            transition: color 0.2s;
+        }
+
+        .nav-login:hover {
+            color: var(--petrol);
+        }
+
+        /* ===================== HERO ===================== */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--petrol-dark) 0%, var(--petrol) 50%, var(--petrol-mid) 100%);
+            padding-top: 64px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+            background-size: 64px 64px;
+        }
+
+        .hero-glow {
+            position: absolute;
+            top: -200px;
+            right: -200px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-glow2 {
+            position: absolute;
+            bottom: -100px;
+            left: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(46, 139, 87, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-inner {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            padding: 80px 0;
+        }
+
+        .hero-text {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .hero-badge {
+            width: fit-content;
+            animation: fadeUp 0.6s ease both;
+        }
+
+        .hero-h1 {
+            font-family: var(--font-display);
+            font-size: clamp(38px, 4.5vw, 58px);
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.1;
+            animation: fadeUp 0.6s 0.1s ease both;
+        }
+
+        .hero-h1 em {
+            font-style: normal;
+            color: var(--amber);
+        }
+
+        .hero-sub {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.65;
+            max-width: 480px;
+            animation: fadeUp 0.6s 0.2s ease both;
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            animation: fadeUp 0.6s 0.3s ease both;
+        }
+
+        .hero-social-proof {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: fadeUp 0.6s 0.4s ease both;
+        }
+
+        .avatars {
+            display: flex;
+        }
+
+        .avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 2px solid var(--petrol);
+            background: var(--petrol-mid);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 11px;
+            font-weight: 700;
+            color: #fff;
+            margin-left: -8px;
+            flex-shrink: 0;
+        }
+
+        .avatar:first-child {
+            margin-left: 0;
+        }
+
+        .avatar.a1 {
+            background: #2563eb;
+        }
+
+        .avatar.a2 {
+            background: #16a34a;
+        }
+
+        .avatar.a3 {
+            background: #dc2626;
+        }
+
+        .avatar.a4 {
+            background: #9333ea;
+        }
+
+        .avatar.a5 {
+            background: #0891b2;
+        }
+
+        .social-text {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.4;
+        }
+
+        .social-text strong {
+            color: #fff;
+            display: block;
+        }
+
+        /* Hero visual */
+        .hero-visual {
+            position: relative;
+            animation: fadeUp 0.7s 0.2s ease both;
+        }
+
+        .browser-frame {
+            background: #1e293b;
+            border-radius: 12px;
+            box-shadow: 0 32px 80px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08);
+            overflow: hidden;
+        }
+
+        .browser-bar {
+            background: #0f172a;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .browser-dots {
+            display: flex;
+            gap: 5px;
+        }
+
+        .browser-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .browser-url {
+            flex: 1;
+            background: #1e293b;
+            border-radius: 4px;
+            height: 22px;
+            margin: 0 12px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .browser-url span {
+            font-size: 11px;
+            color: #64748b;
+            font-family: var(--font-body);
+        }
+
+        .browser-content {
+            background: #F4F6F9;
+        }
+
+        /* Fake app UI inside browser */
+        .fake-app {
+            display: flex;
+            height: 280px;
+        }
+
+        .fake-sidebar {
+            width: 52px;
+            background: var(--petrol);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px 0;
+            gap: 18px;
+        }
+
+        .fake-sidebar-item {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fake-sidebar-item.active {
+            background: var(--amber);
+        }
+
+        .fake-sidebar-item svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .fake-main {
+            flex: 1;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow: hidden;
+        }
+
+        .fake-topbar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .fake-topbar-title {
+            font-family: var(--font-display);
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+        .fake-topbar-right {
+            margin-left: auto;
+            display: flex;
+            gap: 6px;
+        }
+
+        .fake-btn {
+            background: var(--amber);
+            border-radius: 4px;
+            padding: 3px 8px;
+            font-size: 9px;
+            color: #fff;
+            font-family: var(--font-display);
+            font-weight: 600;
+        }
+
+        .fake-calendar-header {
+            display: grid;
+            grid-template-columns: 48px repeat(5, 1fr);
+            gap: 2px;
+        }
+
+        .fake-day-label {
+            background: #fff;
+            border-radius: 4px;
+            padding: 4px;
+            text-align: center;
+        }
+
+        .fake-day-name {
+            font-size: 8px;
+            color: var(--ink3);
+            font-family: var(--font-display);
+            font-weight: 500;
+        }
+
+        .fake-day-num {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--ink);
+            font-family: var(--font-display);
+        }
+
+        .fake-calendar-row {
+            display: grid;
+            grid-template-columns: 48px repeat(5, 1fr);
+            gap: 2px;
+            align-items: start;
+        }
+
+        .fake-time {
+            font-size: 8px;
+            color: var(--ink3);
+            padding: 3px 4px;
+            text-align: right;
+            font-family: var(--font-display);
+        }
+
+        .fake-slot {
+            border-radius: 4px;
+        }
+
+        .fake-session {
+            border-radius: 4px;
+            padding: 3px 5px;
+        }
+
+        .fake-session .fs-name {
+            font-size: 8px;
+            font-weight: 700;
+            font-family: var(--font-display);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .fake-session .fs-type {
+            font-size: 7px;
+            opacity: 0.75;
+            font-family: var(--font-display);
+        }
+
+        .s-blue {
+            background: #dbeafe;
+        }
+
+        .s-blue .fs-name {
+            color: #1d4ed8;
+        }
+
+        .s-green {
+            background: #dcfce7;
+        }
+
+        .s-green .fs-name {
+            color: #15803d;
+        }
+
+        .s-purple {
+            background: #ede9fe;
+        }
+
+        .s-purple .fs-name {
+            color: #6d28d9;
+        }
+
+        .s-orange {
+            background: #ffedd5;
+        }
+
+        .s-orange .fs-name {
+            color: #c2410c;
+        }
+
+        .s-empty {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        /* Floating notification cards */
+        .float-card {
+            position: absolute;
+            background: #fff;
+            border-radius: 10px;
+            padding: 10px 14px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-display);
+            white-space: nowrap;
+            z-index: 5;
+        }
+
+        .float-card-1 {
+            bottom: -20px;
+            left: -40px;
+            animation: floatY 3s ease-in-out infinite;
+        }
+
+        .float-card-2 {
+            top: 30px;
+            right: -48px;
+            animation: floatY 3s 1s ease-in-out infinite;
+        }
+
+        .float-card-3 {
+            bottom: 60px;
+            right: -56px;
+            animation: floatY 3s 2s ease-in-out infinite;
+        }
+
+        .float-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .float-dot svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .fd-green {
+            background: #dcfce7;
+        }
+
+        .fd-blue {
+            background: #dbeafe;
+        }
+
+        .fd-yellow {
+            background: #fef9c3;
+        }
+
+        .float-text strong {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--ink);
+            display: block;
+            line-height: 1.2;
+        }
+
+        .float-text span {
+            font-size: 11px;
+            color: var(--ink3);
+        }
+
+        /* ===================== LOGOS ===================== */
+        .logos {
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logos-label {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--ink3);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 24px;
+            font-family: var(--font-display);
+        }
+
+        .logos-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 48px;
+            flex-wrap: wrap;
+        }
+
+        .logo-item {
+            font-family: var(--font-display);
+            font-size: 15px;
+            font-weight: 700;
+            color: #cbd5e1;
+            letter-spacing: -0.02em;
+        }
+
+        /* ===================== PROBLEMA ===================== */
+        .pain-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 48px;
+        }
+
+        .pain-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            transition: all 0.2s;
+        }
+
+        .pain-card:hover {
+            border-color: #fca5a5;
+            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .pain-icon {
+            width: 36px;
+            height: 36px;
+            background: #fee2e2;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+        }
+
+        .pain-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .pain-card h3 {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 6px;
+        }
+
+        .pain-card p {
+            font-size: 14px;
+            color: var(--ink2);
+            line-height: 1.55;
+        }
+
+        /* ===================== FEATURES ===================== */
+        .feature-block {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            margin-bottom: 96px;
+        }
+
+        .feature-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .feature-block.reverse {
+            direction: rtl;
+        }
+
+        .feature-block.reverse>* {
+            direction: ltr;
+        }
+
+        .feature-visual {
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            background: #fff;
+            border: 1px solid var(--border);
+        }
+
+        .feature-text {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .feature-text h3 {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--ink);
+            line-height: 1.2;
+        }
+
+        .feature-text p {
+            font-size: 16px;
+            color: var(--ink2);
+            line-height: 1.65;
+        }
+
+        .check-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            color: var(--ink);
+            font-family: var(--font-display);
+            font-weight: 500;
+        }
+
+        .check-dot {
+            width: 20px;
+            height: 20px;
+            background: var(--green-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .check-dot svg {
+            width: 11px;
+            height: 11px;
+        }
+
+        /* Fake screens for features */
+        .fake-feature {
+            padding: 20px;
+            background: var(--bg);
+        }
+
+        .fake-feature-inner {
+            background: #fff;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .fake-feature-header {
+            background: var(--petrol);
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ffh-title {
+            font-family: var(--font-display);
+            font-size: 11px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .ffh-badge {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+            padding: 2px 7px;
+            font-size: 9px;
+            font-family: var(--font-display);
+            color: #fff;
+        }
+
+        .fake-prontuario {
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .fp-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .fp-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--ink3);
+            font-family: var(--font-display);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .fp-field {
+            background: var(--bg);
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 10px;
+            color: var(--ink);
+            font-family: var(--font-display);
+            flex: 1;
+        }
+
+        .fp-field.tall {
+            min-height: 44px;
+        }
+
+        .fp-field.green {
+            background: #dcfce7;
+            color: #15803d;
+            font-weight: 600;
+        }
+
+        .fake-relatorio {
+            padding: 14px;
+        }
+
+        .fr-kpis {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .fr-kpi {
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+
+        .fr-kpi-num {
+            font-family: var(--font-display);
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--petrol);
+            line-height: 1;
+        }
+
+        .fr-kpi-label {
+            font-size: 9px;
+            color: var(--ink3);
+            font-family: var(--font-display);
+            margin-top: 3px;
+        }
+
+        .fr-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 60px;
+        }
+
+        .fr-bar {
+            flex: 1;
+            border-radius: 4px 4px 0 0;
+            background: var(--petrol);
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .fr-bar:hover {
+            opacity: 1;
+        }
+
+        /* ===================== HOW IT WORKS ===================== */
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            margin-top: 56px;
+            position: relative;
+        }
+
+        .steps::before {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: calc(33.33% + 24px);
+            right: calc(33.33% + 24px);
+            height: 2px;
+            background: linear-gradient(90deg, var(--petrol), transparent);
+            border-style: dashed;
+            border-top: 2px dashed var(--border);
+            pointer-events: none;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 32px 24px;
+        }
+
+        .step-num {
+            font-family: var(--font-display);
+            font-size: 80px;
+            font-weight: 800;
+            color: var(--petrol);
+            opacity: 0.07;
+            line-height: 1;
+            margin-bottom: -20px;
+        }
+
+        .step-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--petrol);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 24px rgba(15, 76, 117, 0.25);
+        }
+
+        .step-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .step h3 {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 10px;
+        }
+
+        .step p {
+            font-size: 15px;
+            color: var(--ink2);
+            line-height: 1.6;
+        }
+
+        /* ===================== DEPOIMENTOS ===================== */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 48px;
+        }
+
+        .testimonial-main {
+            grid-row: span 2;
+            background: var(--petrol);
+            border-radius: var(--radius);
+            padding: 36px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .testimonial-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px;
+            transition: all 0.2s;
+        }
+
+        .testimonial-card:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+        }
+
+        .stars {
+            display: flex;
+            gap: 3px;
+            margin-bottom: 16px;
+        }
+
+        .star {
+            color: var(--amber);
+            font-size: 16px;
+        }
+
+        .quote {
+            font-size: 16px;
+            line-height: 1.65;
+            margin-bottom: 20px;
+        }
+
+        .quote-main {
+            font-size: 20px;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        .quote-sm {
+            font-size: 15px;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ta-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .ta-name {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--ink);
+            line-height: 1.2;
+        }
+
+        .ta-role {
+            font-size: 13px;
+            color: var(--ink3);
+        }
+
+        .ta-name-white {
+            color: #fff;
+        }
+
+        .ta-role-white {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* ===================== PRECOS ===================== */
+        .pricing-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 40px 0;
+        }
+
+        .toggle-label {
+            font-family: var(--font-display);
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--ink2);
+            cursor: pointer;
+        }
+
+        .toggle-label.active {
+            color: var(--petrol);
+            font-weight: 700;
+        }
+
+        .toggle-track {
+            width: 48px;
+            height: 26px;
+            background: var(--petrol);
+            border-radius: 100px;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.2s;
+        }
+
+        .toggle-thumb {
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.2s;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-track.annual .toggle-thumb {
+            transform: translateX(22px);
+        }
+
+        .economy-badge {
+            background: var(--green);
+            color: #fff;
+            border-radius: 100px;
+            padding: 3px 10px;
+            font-size: 12px;
+            font-family: var(--font-display);
+            font-weight: 700;
+        }
+
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .plan-card {
+            background: #fff;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .plan-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .plan-card.featured {
+            border-color: var(--petrol);
+            box-shadow: 0 0 0 4px rgba(15, 76, 117, 0.06);
+        }
+
+        .plan-badge {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--petrol);
+            color: #fff;
+            border-radius: 100px;
+            padding: 4px 16px;
+            font-size: 12px;
+            font-family: var(--font-display);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .plan-name {
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--ink3);
+            margin-bottom: 6px;
+        }
+
+        .plan-desc {
+            font-size: 13px;
+            color: var(--ink3);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .plan-price {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+
+        .plan-currency {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--ink);
+            padding-bottom: 8px;
+        }
+
+        .plan-amount {
+            font-family: var(--font-display);
+            font-size: 52px;
+            font-weight: 800;
+            color: var(--ink);
+            line-height: 1;
+        }
+
+        .plan-period {
+            font-family: var(--font-display);
+            font-size: 14px;
+            color: var(--ink3);
+            padding-bottom: 10px;
+        }
+
+        .plan-billing {
+            font-size: 12px;
+            color: var(--ink3);
+            margin-bottom: 28px;
+            height: 18px;
+        }
+
+        .plan-billing em {
+            font-style: normal;
+            color: var(--green);
+            font-weight: 600;
+        }
+
+        .plan-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 20px 0;
+        }
+
+        .plan-features {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+            margin-bottom: 28px;
+        }
+
+        .plan-feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .plan-feature.included {
+            color: var(--ink);
+        }
+
+        .plan-feature.excluded {
+            color: #cbd5e1;
+            text-decoration: line-through;
+        }
+
+        .plan-feature-icon {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .fi-yes {
+            background: var(--green-light);
+        }
+
+        .fi-yes svg {
+            color: var(--green);
+            width: 10px;
+            height: 10px;
+        }
+
+        .fi-no {
+            background: #f1f5f9;
+        }
+
+        .fi-no svg {
+            color: #94a3b8;
+            width: 10px;
+            height: 10px;
+        }
+
+        .plan-limit {
+            font-size: 12px;
+            color: var(--petrol);
+            font-family: var(--font-display);
+            font-weight: 600;
+            background: rgba(15, 76, 117, 0.06);
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-bottom: 20px;
+        }
+
+        /* FAQ accordion */
+        .faq {
+            margin-top: 64px;
+        }
+
+        .faq-title {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--ink);
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .faq-list {
+            max-width: 640px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .faq-item {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+        }
+
+        .faq-q {
+            width: 100%;
+            text-align: left;
+            background: #fff;
+            padding: 16px 20px;
+            font-family: var(--font-display);
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--ink);
+            cursor: pointer;
+            border: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .faq-q:hover {
+            background: var(--bg);
+        }
+
+        .faq-a {
+            display: none;
+            padding: 0 20px 16px;
+            font-size: 14px;
+            color: var(--ink2);
+            line-height: 1.6;
+            background: #fff;
+        }
+
+        .faq-item.open .faq-a {
+            display: block;
+        }
+
+        .faq-item.open .faq-chevron {
+            transform: rotate(180deg);
+        }
+
+        .faq-chevron {
+            transition: transform 0.2s;
+            color: var(--ink3);
+        }
+
+        /* ===================== CTA FINAL ===================== */
+        .cta-final {
+            background: linear-gradient(135deg, var(--petrol-dark), var(--petrol-mid));
+            padding: 96px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-final-grid {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 48px 48px;
+        }
+
+        .cta-final-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(28px, 3.5vw, 44px);
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 16px;
+            line-height: 1.15;
+        }
+
+        .cta-sub {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 36px;
+        }
+
+        .cta-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .cta-micro {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .cta-micro span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* ===================== FOOTER ===================== */
+        .footer {
+            background: #0d1117;
+            padding: 64px 0 32px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1.5fr repeat(3, 1fr);
+            gap: 48px;
+            margin-bottom: 48px;
+        }
+
+        .footer-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .footer-tagline {
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.6;
+            max-width: 220px;
+        }
+
+        .footer-socials {
+            display: flex;
+            gap: 10px;
+        }
+
+        .social-btn {
+            width: 36px;
+            height: 36px;
+            background: #1e293b;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .social-btn:hover {
+            background: var(--petrol);
+        }
+
+        .social-btn svg {
+            width: 16px;
+            height: 16px;
+            color: #94a3b8;
+        }
+
+        .footer-col h4 {
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 16px;
+        }
+
+        .footer-col ul {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .footer-col li a {
+            font-size: 14px;
+            color: #64748b;
+            transition: color 0.2s;
+        }
+
+        .footer-col li a:hover {
+            color: #fff;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #1e293b;
+            padding-top: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .footer-copy {
+            font-size: 13px;
+            color: #475569;
+        }
+
+        .footer-seals {
+            display: flex;
+            gap: 12px;
+        }
+
+        .seal {
+            background: #1e293b;
+            border-radius: 6px;
+            padding: 5px 10px;
+            font-size: 11px;
+            font-family: var(--font-display);
+            font-weight: 600;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .seal svg {
+            width: 12px;
+            height: 12px;
+            color: var(--green);
+        }
+
+        /* ===================== ANIMATIONS ===================== */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes floatY {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        /* Scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(32px);
+            transition: opacity 0.6s, transform 0.6s;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        .reveal-delay-1 {
+            transition-delay: 0.1s;
+        }
+
+        .reveal-delay-2 {
+            transition-delay: 0.2s;
+        }
+
+        .reveal-delay-3 {
+            transition-delay: 0.3s;
+        }
+
+        /* ===================== RESPONSIVE ===================== */
+        @media (max-width: 900px) {
+            .hero-inner {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .float-card-1,
+            .float-card-2,
+            .float-card-3 {
+                display: none;
+            }
+
+            .pain-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .feature-block {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+
+            .feature-block.reverse {
+                direction: ltr;
+            }
+
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .testimonial-main {
+                grid-row: span 1;
+            }
+
+            .plans-grid {
+                grid-template-columns: 1fr;
+                max-width: 440px;
+                margin: 0 auto;
+            }
+
+            .steps {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 0 20px;
+            }
+
+            .section {
+                padding: 64px 0;
+            }
+
+            .pain-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="navbar-inner">
+                <a href="#" class="nav-logo">
+                    <div class="nav-logo-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z" />
+                            <circle cx="12" cy="9" r="2.5" fill="white" stroke="none" />
+                        </svg>
+                    </div>
+                    FisioFlow
+                </a>
+                <nav class="nav-links">
+                    <a href="#features">Funcionalidades</a>
+                    <a href="#how">Como funciona</a>
+                    <a href="#pricing">Preços</a>
+                    <a href="#testimonials">Depoimentos</a>
+                </nav>
+                <div class="nav-actions">
+                    <a href="#" class="nav-login">Entrar</a>
+                    <a href="#pricing" class="btn btn-amber">Começar grátis</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-grid"></div>
+        <div class="hero-glow"></div>
+        <div class="hero-glow2"></div>
+        <div class="container">
+            <div class="hero-inner">
+                <div class="hero-text">
+                    <div class="hero-badge">
+                        <span class="tag">✦ Mais de 500 clínicas confiam no FisioFlow</span>
+                    </div>
+                    <h1 class="hero-h1">Gerencie sua clínica de fisioterapia com <em>inteligência</em></h1>
+                    <p class="hero-sub">Agenda inteligente, prontuário eletrônico e relatórios em um único sistema.
+                        Simples de usar, poderoso para crescer.</p>
+                    <div class="hero-actions">
+                        <a href="#pricing" class="btn btn-amber btn-amber-lg">Começar 14 dias grátis</a>
+                        <a href="#how" class="btn btn-ghost-white">▶ Ver demonstração</a>
+                    </div>
+                    <div class="hero-social-proof">
+                        <div class="avatars">
+                            <div class="avatar a1">CR</div>
+                            <div class="avatar a2">AP</div>
+                            <div class="avatar a3">MO</div>
+                            <div class="avatar a4">JT</div>
+                            <div class="avatar a5">LS</div>
+                        </div>
+                        <div class="social-text">
+                            <strong>+500 clínicas ativas</strong>
+                            ⭐⭐⭐⭐⭐ 4.9/5 de avaliação
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-visual">
+                    <div class="browser-frame">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <div class="browser-dot" style="background:#ff5f57"></div>
+                                <div class="browser-dot" style="background:#febc2e"></div>
+                                <div class="browser-dot" style="background:#28c840"></div>
+                            </div>
+                            <div class="browser-url"><span>app.fisioflow.com.br/agenda</span></div>
+                        </div>
+                        <div class="browser-content">
+                            <div class="fake-app">
+                                <div class="fake-sidebar">
+                                    <div class="fake-sidebar-item active">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                            <rect x="3" y="4" width="18" height="18" rx="2" />
+                                            <line x1="16" y1="2" x2="16" y2="6" />
+                                            <line x1="8" y1="2" x2="8" y2="6" />
+                                            <line x1="3" y1="10" x2="21" y2="10" />
+                                        </svg>
+                                    </div>
+                                    <div class="fake-sidebar-item">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)"
+                                            stroke-width="2">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                            <circle cx="12" cy="7" r="4" />
+                                        </svg>
+                                    </div>
+                                    <div class="fake-sidebar-item">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)"
+                                            stroke-width="2">
+                                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                                        </svg>
+                                    </div>
+                                    <div class="fake-sidebar-item">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)"
+                                            stroke-width="2">
+                                            <circle cx="12" cy="12" r="3" />
+                                            <path
+                                                d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2m0 18v-2m10-8h-2M4 12H2m15.07 7.07l-1.41-1.41M4.93 19.07l1.41-1.41" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="fake-main">
+                                    <div class="fake-topbar">
+                                        <span class="fake-topbar-title">Agenda da semana</span>
+                                        <div class="fake-topbar-right">
+                                            <span class="fake-btn">+ Agendar</span>
+                                        </div>
+                                    </div>
+                                    <div class="fake-calendar-header">
+                                        <div></div>
+                                        <div class="fake-day-label">
+                                            <div class="fake-day-name">SEG</div>
+                                            <div class="fake-day-num">09</div>
+                                        </div>
+                                        <div class="fake-day-label">
+                                            <div class="fake-day-name">TER</div>
+                                            <div class="fake-day-num">10</div>
+                                        </div>
+                                        <div class="fake-day-label" style="background:#EEF2FF">
+                                            <div class="fake-day-name" style="color:#4f46e5">QUA</div>
+                                            <div class="fake-day-num" style="color:#4f46e5">11</div>
+                                        </div>
+                                        <div class="fake-day-label">
+                                            <div class="fake-day-name">QUI</div>
+                                            <div class="fake-day-num">12</div>
+                                        </div>
+                                        <div class="fake-day-label">
+                                            <div class="fake-day-name">SEX</div>
+                                            <div class="fake-day-num">13</div>
+                                        </div>
+                                    </div>
+                                    <div class="fake-calendar-row">
+                                        <div class="fake-time">08:00</div>
+                                        <div class="fake-session s-blue">
+                                            <div class="fs-name">Maria S.</div>
+                                            <div class="fs-type">Avaliação</div>
+                                        </div>
+                                        <div class="fake-slot s-empty"></div>
+                                        <div class="fake-session s-green">
+                                            <div class="fs-name">João A.</div>
+                                            <div class="fs-type">Sessão</div>
+                                        </div>
+                                        <div class="fake-slot s-empty"></div>
+                                        <div class="fake-session s-orange">
+                                            <div class="fs-name">Pedro L.</div>
+                                            <div class="fs-type">Sessão</div>
+                                        </div>
+                                    </div>
+                                    <div class="fake-calendar-row">
+                                        <div class="fake-time">09:00</div>
+                                        <div class="fake-slot s-empty"></div>
+                                        <div class="fake-session s-purple">
+                                            <div class="fs-name">Ana P.</div>
+                                            <div class="fs-type">Retorno</div>
+                                        </div>
+                                        <div class="fake-session s-blue">
+                                            <div class="fs-name">Carlos M.</div>
+                                            <div class="fs-type">Sessão</div>
+                                        </div>
+                                        <div class="fake-session s-green">
+                                            <div class="fs-name">Lucia F.</div>
+                                            <div class="fs-type">Avaliação</div>
+                                        </div>
+                                        <div class="fake-slot s-empty"></div>
+                                    </div>
+                                    <div class="fake-calendar-row">
+                                        <div class="fake-time">10:00</div>
+                                        <div class="fake-session s-green">
+                                            <div class="fs-name">Roberto K.</div>
+                                            <div class="fs-type">Sessão</div>
+                                        </div>
+                                        <div class="fake-slot s-empty"></div>
+                                        <div class="fake-slot s-empty"></div>
+                                        <div class="fake-session s-purple">
+                                            <div class="fs-name">Fernanda O.</div>
+                                            <div class="fs-type">Retorno</div>
+                                        </div>
+                                        <div class="fake-session s-blue">
+                                            <div class="fs-name">Thiago R.</div>
+                                            <div class="fs-type">Sessão</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Floating cards -->
+                    <div class="float-card float-card-1">
+                        <div class="float-dot fd-green">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                        </div>
+                        <div class="float-text">
+                            <strong>Sessão confirmada</strong>
+                            <span>João Alves · 14h00</span>
+                        </div>
+                    </div>
+                    <div class="float-card float-card-2">
+                        <div class="float-dot fd-blue">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2.5">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                            </svg>
+                        </div>
+                        <div class="float-text">
+                            <strong>Ocupação esta semana</strong>
+                            <span>87% de aproveitamento</span>
+                        </div>
+                    </div>
+                    <div class="float-card float-card-3">
+                        <div class="float-dot fd-yellow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2.5">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                            </svg>
+                        </div>
+                        <div class="float-text">
+                            <strong>3 confirmações pendentes</strong>
+                            <span>Responder agora →</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LOGOS -->
+    <section class="logos">
+        <div class="container">
+            <p class="logos-label">Usado por clínicas em todo o Brasil</p>
+            <div class="logos-row">
+                <span class="logo-item">Clínica Reabilitar</span>
+                <span class="logo-item">FisioVida Centro</span>
+                <span class="logo-item">Corpo em Movimento</span>
+                <span class="logo-item">Instituto Movimento</span>
+                <span class="logo-item">ClínicaFlex</span>
+                <span class="logo-item">Physio Care</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROBLEMA -->
+    <section class="section">
+        <div class="container">
+            <div class="center reveal">
+                <p class="section-label">O problema</p>
+                <h2 class="section-title">Sua clínica ainda usa planilhas e<br>WhatsApp para gerenciar tudo?</h2>
+                <p class="section-sub" style="margin:0 auto">A maioria das clínicas de fisioterapia perde pacientes,
+                    receita e tempo por falta de um sistema integrado.</p>
+            </div>
+            <div class="pain-grid">
+                <div class="pain-card reveal reveal-delay-1">
+                    <div class="pain-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" />
+                            <line x1="16" y1="2" x2="16" y2="6" />
+                            <line x1="8" y1="2" x2="8" y2="6" />
+                            <line x1="3" y1="10" x2="21" y2="10" />
+                            <line x1="9" y1="14" x2="15" y2="14" />
+                        </svg>
+                    </div>
+                    <h3>Agenda bagunçada</h3>
+                    <p>Conflitos de horário, duplo agendamento e pacientes perdidos por falta de controle centralizado.
+                    </p>
+                </div>
+                <div class="pain-card reveal reveal-delay-2">
+                    <div class="pain-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="16" y1="13" x2="8" y2="13" />
+                            <line x1="16" y1="17" x2="8" y2="17" />
+                        </svg>
+                    </div>
+                    <h3>Prontuário no papel</h3>
+                    <p>Evoluções ilegíveis, difíceis de encontrar, sem backup. Risco jurídico e perda de histórico
+                        clínico.</p>
+                </div>
+                <div class="pain-card reveal reveal-delay-3">
+                    <div class="pain-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round">
+                            <line x1="12" y1="1" x2="12" y2="23" />
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                        </svg>
+                    </div>
+                    <h3>Sem controle financeiro</h3>
+                    <p>Sem saber quanto entra por convênio, qual fisioterapeuta rende mais ou onde está a inadimplência.
+                    </p>
+                </div>
+                <div class="pain-card reveal">
+                    <div class="pain-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                        </svg>
+                    </div>
+                    <h3>Faltas sem aviso</h3>
+                    <p>Pacientes faltam e você só descobre na hora. Sem lembretes automáticos, sem confirmação
+                        antecipada.</p>
+                </div>
+                <div class="pain-card reveal reveal-delay-1">
+                    <div class="pain-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round">
+                            <line x1="18" y1="20" x2="18" y2="10" />
+                            <line x1="12" y1="20" x2="12" y2="4" />
+                            <line x1="6" y1="20" x2="6" y2="14" />
+                        </svg>
+                    </div>
+                    <h3>Relatórios inexistentes</h3>
+                    <p>Decisões tomadas no feeling. Sem dados sobre ocupação, desempenho ou taxa de comparecimento.</p>
+                </div>
+                <div class="pain-card reveal reveal-delay-2">
+                    <div class="pain-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                    </div>
+                    <h3>LGPD ignorada</h3>
+                    <p>Dados de saúde sem proteção adequada. Sem logs de auditoria, sem consentimento, risco jurídico
+                        real.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="section section-alt" id="features">
+        <div class="container">
+            <div class="center reveal" style="margin-bottom:64px">
+                <p class="section-label">Solução</p>
+                <h2 class="section-title">Tudo que sua clínica precisa<br>em um só lugar</h2>
+                <p class="section-sub" style="margin:0 auto">O FisioFlow foi construído especificamente para
+                    fisioterapia — não é um sistema genérico adaptado.</p>
+            </div>
+
+            <!-- Feature 1 -->
+            <div class="feature-block reveal">
+                <div class="feature-visual">
+                    <div class="fake-feature">
+                        <div class="fake-feature-inner">
+                            <div class="fake-feature-header">
+                                <span class="ffh-title">Agenda · Visão Semanal</span>
+                                <span class="ffh-badge">5 fisioterapeutas</span>
+                            </div>
+                            <div style="padding:14px">
+                                <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:8px">
+                                    <div style="background:#dbeafe;border-radius:6px;padding:6px 8px">
+                                        <div
+                                            style="font-size:9px;font-family:var(--font-display);font-weight:700;color:#1d4ed8">
+                                            Dr. Paulo</div>
+                                        <div style="font-size:8px;color:#3b82f6">Ortopédica</div>
+                                    </div>
+                                    <div style="background:#dcfce7;border-radius:6px;padding:6px 8px">
+                                        <div
+                                            style="font-size:9px;font-family:var(--font-display);font-weight:700;color:#15803d">
+                                            Dra. Ana</div>
+                                        <div style="font-size:8px;color:#22c55e">Neurológica</div>
+                                    </div>
+                                    <div style="background:#ede9fe;border-radius:6px;padding:6px 8px">
+                                        <div
+                                            style="font-size:9px;font-family:var(--font-display);font-weight:700;color:#6d28d9">
+                                            Dr. Carlos</div>
+                                        <div style="font-size:8px;color:#8b5cf6">Desportiva</div>
+                                    </div>
+                                    <div style="background:#ffedd5;border-radius:6px;padding:6px 8px">
+                                        <div
+                                            style="font-size:9px;font-family:var(--font-display);font-weight:700;color:#c2410c">
+                                            Dra. Lucia</div>
+                                        <div style="font-size:8px;color:#f97316">Pediátrica</div>
+                                    </div>
+                                    <div style="background:#fce7f3;border-radius:6px;padding:6px 8px">
+                                        <div
+                                            style="font-size:9px;font-family:var(--font-display);font-weight:700;color:#9d174d">
+                                            Dr. Marcos</div>
+                                        <div style="font-size:8px;color:#ec4899">Resp.</div>
+                                    </div>
+                                </div>
+                                <div style="display:flex;flex-direction:column;gap:3px">
+                                    <div
+                                        style="display:grid;grid-template-columns:28px repeat(5,1fr);gap:3px;align-items:center">
+                                        <span
+                                            style="font-size:8px;color:var(--ink3);font-family:var(--font-display);text-align:right">08h</span>
+                                        <div style="background:#dbeafe;border-radius:4px;padding:3px 5px">
+                                            <div
+                                                style="font-size:8px;font-family:var(--font-display);font-weight:700;color:#1d4ed8">
+                                                Maria S.</div>
+                                        </div>
+                                        <div style="background:rgba(0,0,0,0.04);border-radius:4px;height:22px"></div>
+                                        <div style="background:#ede9fe;border-radius:4px;padding:3px 5px">
+                                            <div
+                                                style="font-size:8px;font-family:var(--font-display);font-weight:700;color:#6d28d9">
+                                                João A.</div>
+                                        </div>
+                                        <div style="background:rgba(0,0,0,0.04);border-radius:4px;height:22px"></div>
+                                        <div style="background:#fce7f3;border-radius:4px;padding:3px 5px">
+                                            <div
+                                                style="font-size:8px;font-family:var(--font-display);font-weight:700;color:#9d174d">
+                                                Pedro L.</div>
+                                        </div>
+                                    </div>
+                                    <div
+                                        style="display:grid;grid-template-columns:28px repeat(5,1fr);gap:3px;align-items:center">
+                                        <span
+                                            style="font-size:8px;color:var(--ink3);font-family:var(--font-display);text-align:right">09h</span>
+                                        <div style="background:rgba(0,0,0,0.04);border-radius:4px;height:22px"></div>
+                                        <div style="background:#dcfce7;border-radius:4px;padding:3px 5px">
+                                            <div
+                                                style="font-size:8px;font-family:var(--font-display);font-weight:700;color:#15803d">
+                                                Ana P.</div>
+                                        </div>
+                                        <div style="background:rgba(0,0,0,0.04);border-radius:4px;height:22px"></div>
+                                        <div style="background:#ffedd5;border-radius:4px;padding:3px 5px">
+                                            <div
+                                                style="font-size:8px;font-family:var(--font-display);font-weight:700;color:#c2410c">
+                                                Lucia F.</div>
+                                        </div>
+                                        <div style="background:rgba(0,0,0,0.04);border-radius:4px;height:22px"></div>
+                                    </div>
+                                    <div
+                                        style="display:grid;grid-template-columns:28px repeat(5,1fr);gap:3px;align-items:center">
+                                        <span
+                                            style="font-size:8px;color:var(--ink3);font-family:var(--font-display);text-align:right">10h</span>
+                                        <div style="background:#dbeafe;border-radius:4px;padding:3px 5px">
+                                            <div
+                                                style="font-size:8px;font-family:var(--font-display);font-weight:700;color:#1d4ed8">
+                                                Carlos M.</div>
+                                        </div>
+                                        <div style="background:rgba(0,0,0,0.04);border-radius:4px;height:22px"></div>
+                                        <div style="background:#ede9fe;border-radius:4px;padding:3px 5px">
+                                            <div
+                                                style="font-size:8px;font-family:var(--font-display);font-weight:700;color:#6d28d9">
+                                                Fernanda</div>
+                                        </div>
+                                        <div style="background:rgba(0,0,0,0.04);border-radius:4px;height:22px"></div>
+                                        <div style="background:#fce7f3;border-radius:4px;padding:3px 5px">
+                                            <div
+                                                style="font-size:8px;font-family:var(--font-display);font-weight:700;color:#9d174d">
+                                                Thiago R.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-text">
+                    <span class="tag tag-dark">Agenda</span>
+                    <h3>Agenda visual para toda a equipe</h3>
+                    <p>Visualize todos os fisioterapeutas em uma grade de horários. Evite conflitos automaticamente.
+                        Envie lembretes por WhatsApp e e-mail sem esforço.</p>
+                    <div class="check-list">
+                        <div class="check-item">
+                            <div class="check-dot"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Visão dia, semana e mês
+                        </div>
+                        <div class="check-item">
+                            <div class="check-dot"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Múltiplos fisioterapeutas simultâneos
+                        </div>
+                        <div class="check-item">
+                            <div class="check-dot"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Bloqueio automático de conflitos
+                        </div>
+                        <div class="check-item">
+                            <div class="check-dot"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Lembretes automáticos por WhatsApp e e-mail
+                        </div>
+                        <div class="check-item">
+                            <div class="check-dot"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Confirmação de presença online
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="feature-block reverse reveal">
+                <div class="feature-visual">
+                    <div class="fake-feature">
+                        <div class="fake-feature-inner">
+                            <div class="fake-feature-header">
+                                <span class="ffh-title">Prontuário · João Alves</span>
+                                <span class="ffh-badge">Evolução #14</span>
+                            </div>
+                            <div class="fake-prontuario">
+                                <div class="fp-row">
+                                    <div style="flex:1">
+                                        <div class="fp-label">Queixa principal</div>
+                                        <div class="fp-field">Dor lombar irradiando para MMII D, EVA 6/10</div>
+                                    </div>
+                                </div>
+                                <div class="fp-row">
+                                    <div style="flex:1">
+                                        <div class="fp-label">Diagnóstico</div>
+                                        <div class="fp-field">Lombociatalgia por hérnia L4-L5</div>
+                                    </div>
+                                </div>
+                                <div class="fp-row">
+                                    <div style="flex:1">
+                                        <div class="fp-label">Conduta realizada</div>
+                                        <div class="fp-field tall">TENS paravertebral 20min · Mobilização lombar ·
+                                            Alongamento cadeia posterior · Exercícios de McKenzie</div>
+                                    </div>
+                                </div>
+                                <div class="fp-row">
+                                    <div style="flex:1">
+                                        <div class="fp-label">Evolução</div>
+                                        <div class="fp-field green">✓ Melhora significativa — EVA 4/10</div>
+                                    </div>
+                                    <div style="flex:1">
+                                        <div class="fp-label">Próxima sessão</div>
+                                        <div class="fp-field">14/06 · 14h00</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-text">
+                    <span class="tag tag-dark">Prontuário</span>
+                    <h3>Prontuário clínico completo e seguro</h3>
+                    <p>Registre evoluções, diagnósticos e condutas de forma organizada. Acesse o histórico completo do
+                        paciente em segundos, de qualquer dispositivo.</p>
+                    <div class="check-list">
+                        <div class="check-item">
+                            <div class="check-dot"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Evolução clínica estruturada por sessão
+                        </div>
+                        <div class="check-item">
+                            <div class="check-dot"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Histórico completo e timeline do paciente
+                        </div>
+                        <div class="check-item">
+                            <div class="check-dot"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Upload de exames, laudos e imagens
+                        </div>
+                        <div class="check-item">
+                            <div class="check-dot"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>100% conforme LGPD e CFO
+                        </div>
+                        <div class="check-item">
+                            <div class="check-dot"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Auditoria completa de todas as alterações
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="feature-block reveal">
+                <div class="feature-visual">
+                    <div class="fake-feature">
+                        <div class="fake-feature-inner">
+                            <div class="fake-feature-header">
+                                <span class="ffh-title">Relatórios · Junho 2025</span>
+                                <span class="ffh-badge">Exportar PDF</span>
+                            </div>
+                            <div class="fake-relatorio">
+                                <div class="fr-kpis">
+                                    <div class="fr-kpi">
+                                        <div class="fr-kpi-num">312</div>
+                                        <div class="fr-kpi-label">Sessões realizadas</div>
+                                    </div>
+                                    <div class="fr-kpi">
+                                        <div class="fr-kpi-num" style="color:var(--green)">87%</div>
+                                        <div class="fr-kpi-label">Taxa de comparec.</div>
+                                    </div>
+                                    <div class="fr-kpi">
+                                        <div class="fr-kpi-num" style="color:var(--amber)">8%</div>
+                                        <div class="fr-kpi-label">Taxa de faltas</div>
+                                    </div>
+                                </div>
+                                <div
+                                    style="font-size:9px;font-family:var(--font-display);font-weight:600;color:var(--ink3);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em">
+                                    Sessões por dia</div>
+                                <div class="fr-bars">
+                                    <div class="fr-bar" style="height:40%"></div>
+                                    <div class="fr-bar" style="height:75%"></div>
+                                    <div class="fr-bar" style="height:60%"></div>
+                                    <div class="fr-bar" style="height:90%"></div>
+                                    <div class="fr-bar" style="height:55%"></div>
+                                    <div class="fr-bar" style="height:100%"></div>
+                                    <div class="fr-bar" style="height:70%"></div>
+                                    <div class="fr-bar" style="height:80%"></div>
+                                    <div class="fr-bar" style="height:65%"></div>
+                                    <div class="fr-bar" style="height:85%"></div>
+                                    <div class="fr-bar" style="height:50%"></div>
+                                    <div class="fr-bar" style="height:95%"></div>
+                                    <div class="fr-bar" style="height:72%"></div>
+                                    <div class="fr-bar" style="height:88%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-text">
+                    <span class="tag tag-dark">Relatórios</span>
+                    <h3>Dados reais para decisões inteligentes</h3>
+                    <p>Taxa de faltas, ocupação da agenda, performance por fisioterapeuta. Deixe de adivinhar e passe a
+                        decidir com dados concretos.</p>
+                    <div class="check-list">
+                        <div class="check-item">
+                            <div class="check-dot"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Taxa de comparecimento e faltas
+                        </div>
+                        <div class="check-item">
+                            <div class="check-dot"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Ocupação por fisioterapeuta e turno
+                        </div>
+                        <div class="check-item">
+                            <div class="check-dot"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Evolução de pacientes ativos
+                        </div>
+                        <div class="check-item">
+                            <div class="check-dot"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Controle por convênio
+                        </div>
+                        <div class="check-item">
+                            <div class="check-dot"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Exportação em PDF e Excel
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="section" id="how">
+        <div class="container">
+            <div class="center reveal">
+                <p class="section-label">Como funciona</p>
+                <h2 class="section-title">Do cadastro ao controle total<br>em 3 passos</h2>
+            </div>
+            <div class="steps">
+                <div class="step reveal">
+                    <div class="step-num">01</div>
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                            <line x1="19" y1="8" x2="19" y2="14" />
+                            <line x1="22" y1="11" x2="16" y2="11" />
+                        </svg>
+                    </div>
+                    <h3>Cadastre sua clínica</h3>
+                    <p>Crie sua conta gratuitamente, adicione sua equipe e configure os horários em menos de 10 minutos.
+                    </p>
+                </div>
+                <div class="step reveal reveal-delay-1">
+                    <div class="step-num">02</div>
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" />
+                            <line x1="16" y1="2" x2="16" y2="6" />
+                            <line x1="8" y1="2" x2="8" y2="6" />
+                            <line x1="3" y1="10" x2="21" y2="10" />
+                        </svg>
+                    </div>
+                    <h3>Configure a agenda</h3>
+                    <p>Adicione seus fisioterapeutas, defina os horários de atendimento e comece a agendar pacientes
+                        imediatamente.</p>
+                </div>
+                <div class="step reveal reveal-delay-2">
+                    <div class="step-num">03</div>
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+                            <line x1="18" y1="20" x2="18" y2="10" />
+                            <line x1="12" y1="20" x2="12" y2="4" />
+                            <line x1="6" y1="20" x2="6" y2="14" />
+                            <polyline points="22 20 2 20" />
+                        </svg>
+                    </div>
+                    <h3>Gerencie com dados</h3>
+                    <p>Acompanhe relatórios, evolução dos pacientes e desempenho da clínica em tempo real.</p>
+                </div>
+            </div>
+            <div class="center" style="margin-top:48px">
+                <a href="#pricing" class="btn btn-amber btn-amber-lg">Criar minha conta grátis</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- DEPOIMENTOS -->
+    <section class="section section-alt" id="testimonials">
+        <div class="container">
+            <div class="center reveal">
+                <p class="section-label">Depoimentos</p>
+                <h2 class="section-title">Clínicas que transformaram sua gestão</h2>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-main reveal">
+                    <div>
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <p class="quote quote-main">"Reduzimos nossa taxa de faltas em 40% só com os lembretes
+                            automáticos. O retorno do investimento veio no primeiro mês."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="ta-avatar" style="background:rgba(255,255,255,0.15);color:#fff;font-size:16px">CR
+                        </div>
+                        <div>
+                            <div class="ta-name ta-name-white">Dra. Camila Ramos</div>
+                            <div class="ta-role ta-role-white">Diretora · Clínica Reabilitar SP</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card reveal reveal-delay-1">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p class="quote quote-sm">"Finalmente consigo ver a agenda de todos os meus fisios em uma tela só.
+                        Acabou a confusão de WhatsApp."</p>
+                    <div class="testimonial-author">
+                        <div class="ta-avatar" style="background:#dbeafe;color:#1d4ed8">RT</div>
+                        <div>
+                            <div class="ta-name">Rafael Torres</div>
+                            <div class="ta-role">Fisioterapeuta · Porto Alegre</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card reveal reveal-delay-2">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p class="quote quote-sm">"O prontuário eletrônico salvou horas do meu dia. Em 2 cliques acho o
+                        histórico de qualquer paciente."</p>
+                    <div class="testimonial-author">
+                        <div class="ta-avatar" style="background:#dcfce7;color:#15803d">AP</div>
+                        <div>
+                            <div class="ta-name">Ana Paula Lima</div>
+                            <div class="ta-role">Fisioterapeuta Autônoma · Curitiba</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card reveal reveal-delay-1" style="grid-column: 2">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p class="quote quote-sm">"Os relatórios me mostraram que um turno estava com 30% de ociosidade.
+                        Agendei mais e aumentei o faturamento."</p>
+                    <div class="testimonial-author">
+                        <div class="ta-avatar" style="background:#ede9fe;color:#6d28d9">MO</div>
+                        <div>
+                            <div class="ta-name">Marcos Oliveira</div>
+                            <div class="ta-role">Gestor · FisioVida Centro BH</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PREÇOS -->
+    <section class="section" id="pricing">
+        <div class="container">
+            <div class="center reveal">
+                <p class="section-label">Preços</p>
+                <h2 class="section-title">Planos simples, sem surpresas</h2>
+                <p class="section-sub" style="margin:0 auto">Cancele quando quiser. Sem contrato de fidelidade. 14 dias
+                    grátis em todos os planos.</p>
+            </div>
+
+            <div class="pricing-toggle">
+                <span class="toggle-label active" id="label-mensal">Mensal</span>
+                <div class="toggle-track" id="toggle-track" onclick="togglePricing()">
+                    <div class="toggle-thumb"></div>
+                </div>
+                <span class="toggle-label" id="label-anual">Anual</span>
+                <span class="economy-badge" id="economy-badge" style="opacity:0;transition:opacity 0.2s">Economize
+                    20%</span>
+            </div>
+
+            <div class="plans-grid reveal">
+                <!-- Essencial -->
+                <div class="plan-card">
+                    <div class="plan-name">Essencial</div>
+                    <div class="plan-desc">Para fisioterapeutas autônomos e consultórios individuais</div>
+                    <div class="plan-price">
+                        <span class="plan-currency">R$</span>
+                        <span class="plan-amount" id="price-1">97</span>
+                        <span class="plan-period">/mês</span>
+                    </div>
+                    <div class="plan-billing" id="billing-1">&nbsp;</div>
+                    <div class="plan-limit">1 fisioterapeuta · até 100 pacientes</div>
+                    <div class="plan-features">
+                        <div class="plan-feature included">
+                            <div class="plan-feature-icon fi-yes"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Agenda completa
+                        </div>
+                        <div class="plan-feature included">
+                            <div class="plan-feature-icon fi-yes"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Prontuário eletrônico
+                        </div>
+                        <div class="plan-feature included">
+                            <div class="plan-feature-icon fi-yes"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Cadastro de pacientes
+                        </div>
+                        <div class="plan-feature included">
+                            <div class="plan-feature-icon fi-yes"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Lembretes por e-mail
+                        </div>
+                        <div class="plan-feature included">
+                            <div class="plan-feature-icon fi-yes"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Relatórios básicos
+                        </div>
+                        <div class="plan-divider"></div>
+                        <div class="plan-feature excluded">
+                            <div class="plan-feature-icon fi-no"><svg viewBox="0 0 12 12" fill="none" stroke="#94a3b8"
+                                    stroke-width="2.5">
+                                    <line x1="2" y1="2" x2="10" y2="10" />
+                                    <line x1="10" y1="2" x2="2" y2="10" />
+                                </svg></div>Múltiplos fisioterapeutas
+                        </div>
+                        <div class="plan-feature excluded">
+                            <div class="plan-feature-icon fi-no"><svg viewBox="0 0 12 12" fill="none" stroke="#94a3b8"
+                                    stroke-width="2.5">
+                                    <line x1="2" y1="2" x2="10" y2="10" />
+                                    <line x1="10" y1="2" x2="2" y2="10" />
+                                </svg></div>WhatsApp integrado
+                        </div>
+                        <div class="plan-feature excluded">
+                            <div class="plan-feature-icon fi-no"><svg viewBox="0 0 12 12" fill="none" stroke="#94a3b8"
+                                    stroke-width="2.5">
+                                    <line x1="2" y1="2" x2="10" y2="10" />
+                                    <line x1="10" y1="2" x2="2" y2="10" />
+                                </svg></div>Controle financeiro
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-outline" style="width:100%;justify-content:center">Começar grátis</a>
+                </div>
+
+                <!-- Clínica (destaque) -->
+                <div class="plan-card featured">
+                    <div class="plan-badge">⭐ Mais popular</div>
+                    <div class="plan-name" style="color:var(--petrol)">Clínica</div>
+                    <div class="plan-desc">Para clínicas com equipe de fisioterapeutas</div>
+                    <div class="plan-price">
+                        <span class="plan-currency" style="color:var(--petrol)">R$</span>
+                        <span class="plan-amount" id="price-2" style="color:var(--petrol)">247</span>
+                        <span class="plan-period">/mês</span>
+                    </div>
+                    <div class="plan-billing" id="billing-2">&nbsp;</div>
+                    <div class="plan-limit" style="background:rgba(15,76,117,0.1)">Até 5 fisioterapeutas · pacientes
+                        ilimitados</div>
+                    <div class="plan-features">
+                        <div class="plan-feature included">
+                            <div class="plan-feature-icon fi-yes"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Tudo do Essencial
+                        </div>
+                        <div class="plan-feature included">
+                            <div class="plan-feature-icon fi-yes"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Até 5 fisioterapeutas
+                        </div>
+                        <div class="plan-feature included">
+                            <div class="plan-feature-icon fi-yes"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Lembretes por WhatsApp + e-mail
+                        </div>
+                        <div class="plan-feature included">
+                            <div class="plan-feature-icon fi-yes"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Controle de acesso por role
+                        </div>
+                        <div class="plan-feature included">
+                            <div class="plan-feature-icon fi-yes"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Exercícios e protocolos
+                        </div>
+                        <div class="plan-feature included">
+                            <div class="plan-feature-icon fi-yes"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Relatórios clínicos e operacionais
+                        </div>
+                        <div class="plan-feature included">
+                            <div class="plan-feature-icon fi-yes"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Auditoria completa de ações
+                        </div>
+                        <div class="plan-feature included">
+                            <div class="plan-feature-icon fi-yes"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Suporte prioritário por chat
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-amber"
+                        style="width:100%;justify-content:center;font-size:16px;padding:15px">Começar grátis</a>
+                </div>
+
+                <!-- Enterprise -->
+                <div class="plan-card">
+                    <div class="plan-name">Enterprise</div>
+                    <div class="plan-desc">Para redes de clínicas e grandes operações</div>
+                    <div class="plan-price">
+                        <span class="plan-amount" style="font-size:36px;padding-bottom:4px">Sob consulta</span>
+                    </div>
+                    <div class="plan-billing">&nbsp;</div>
+                    <div class="plan-limit">Fisioterapeutas e unidades ilimitados</div>
+                    <div class="plan-features">
+                        <div class="plan-feature included">
+                            <div class="plan-feature-icon fi-yes"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Tudo do plano Clínica
+                        </div>
+                        <div class="plan-feature included">
+                            <div class="plan-feature-icon fi-yes"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Múltiplas unidades
+                        </div>
+                        <div class="plan-feature included">
+                            <div class="plan-feature-icon fi-yes"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Controle financeiro completo
+                        </div>
+                        <div class="plan-feature included">
+                            <div class="plan-feature-icon fi-yes"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Integração via API
+                        </div>
+                        <div class="plan-feature included">
+                            <div class="plan-feature-icon fi-yes"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Assinatura digital
+                        </div>
+                        <div class="plan-feature included">
+                            <div class="plan-feature-icon fi-yes"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Gerente de conta exclusivo
+                        </div>
+                        <div class="plan-feature included">
+                            <div class="plan-feature-icon fi-yes"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>Onboarding dedicado
+                        </div>
+                        <div class="plan-feature included">
+                            <div class="plan-feature-icon fi-yes"><svg viewBox="0 0 12 12" fill="none" stroke="#2E8B57"
+                                    stroke-width="2.5">
+                                    <polyline points="2 6 5 9 10 3" />
+                                </svg></div>SLA garantido + suporte 24/7
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-outline" style="width:100%;justify-content:center">Falar com vendas</a>
+                </div>
+            </div>
+
+            <!-- FAQ -->
+            <div class="faq reveal">
+                <div class="faq-title">Perguntas frequentes sobre preços</div>
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-q" onclick="toggleFaq(this)">
+                            Preciso de cartão de crédito para o período grátis?
+                            <svg class="faq-chevron" viewBox="0 0 24 24" width="18" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                        </button>
+                        <div class="faq-a">Não. Você testa o FisioFlow por 14 dias sem nenhuma cobrança e sem precisar
+                            cadastrar cartão. Só pedimos seus dados ao final do período, se quiser continuar.</div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-q" onclick="toggleFaq(this)">
+                            Posso mudar de plano depois?
+                            <svg class="faq-chevron" viewBox="0 0 24 24" width="18" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                        </button>
+                        <div class="faq-a">Sim, a qualquer momento e sem taxa de mudança. O valor é ajustado
+                            proporcionalmente ao período restante do seu ciclo de cobrança.</div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-q" onclick="toggleFaq(this)">
+                            Como funciona o cancelamento?
+                            <svg class="faq-chevron" viewBox="0 0 24 24" width="18" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                        </button>
+                        <div class="faq-a">Cancele quando quiser direto pela plataforma, sem burocracia e sem ligar para
+                            ninguém. Seus dados ficam disponíveis por 30 dias após o cancelamento.</div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-q" onclick="toggleFaq(this)">
+                            Tenho desconto para múltiplas unidades?
+                            <svg class="faq-chevron" viewBox="0 0 24 24" width="18" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                        </button>
+                        <div class="faq-a">Sim. Para redes com 2 ou mais unidades, montamos um plano Enterprise
+                            personalizado. Entre em contato com nossa equipe comercial.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA FINAL -->
+    <section class="cta-final">
+        <div class="cta-final-grid"></div>
+        <div class="container cta-final-content reveal">
+            <h2 class="cta-h2">Sua clínica merece uma<br>gestão à altura</h2>
+            <p class="cta-sub">Comece hoje. Configure em 10 minutos. Veja a diferença no primeiro dia.</p>
+            <div class="cta-actions">
+                <a href="#" class="btn btn-amber btn-amber-lg">Começar 14 dias grátis</a>
+                <a href="#" class="btn btn-outline-white">Falar com um especialista →</a>
+            </div>
+            <div class="cta-micro">
+                <span>✓ Sem cartão de crédito</span>
+                <span>✓ Cancele quando quiser</span>
+                <span>✓ Suporte em português</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <div class="nav-logo-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z" />
+                                <circle cx="12" cy="9" r="2.5" fill="white" stroke="none" />
+                            </svg>
+                        </div>
+                        FisioFlow
+                    </div>
+                    <p class="footer-tagline">Gestão inteligente para clínicas de fisioterapia</p>
+                    <div class="footer-socials">
+                        <a href="#" class="social-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="2" width="20" height="20" rx="5" />
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                            </svg>
+                        </a>
+                        <a href="#" class="social-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path
+                                    d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                                <rect x="2" y="9" width="4" height="12" />
+                                <circle cx="4" cy="4" r="2" />
+                            </svg>
+                        </a>
+                        <a href="#" class="social-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path
+                                    d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" />
+                                <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Produto</h4>
+                    <ul>
+                        <li><a href="#">Funcionalidades</a></li>
+                        <li><a href="#">Preços</a></li>
+                        <li><a href="#">Changelog</a></li>
+                        <li><a href="#">Roadmap</a></li>
+                        <li><a href="#">Status do sistema</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Empresa</h4>
+                    <ul>
+                        <li><a href="#">Sobre nós</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Cases de sucesso</a></li>
+                        <li><a href="#">Parceiros</a></li>
+                        <li><a href="#">Trabalhe conosco</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Suporte</h4>
+                    <ul>
+                        <li><a href="#">Central de ajuda</a></li>
+                        <li><a href="#">Contato</a></li>
+                        <li><a href="#">Política de privacidade</a></li>
+                        <li><a href="#">Termos de uso</a></li>
+                        <li><a href="#">LGPD</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span class="footer-copy">© 2025 FisioFlow · Todos os direitos reservados</span>
+                <div class="footer-seals">
+                    <span class="seal">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                        SSL Seguro
+                    </span>
+                    <span class="seal">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        LGPD Conforme
+                    </span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll
+        window.addEventListener('scroll', () => {
+            document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+        });
+
+        // Pricing toggle
+        let isAnnual = false;
+        function togglePricing() {
+            isAnnual = !isAnnual;
+            const track = document.getElementById('toggle-track');
+            track.classList.toggle('annual', isAnnual);
+            document.getElementById('label-mensal').classList.toggle('active', !isAnnual);
+            document.getElementById('label-anual').classList.toggle('active', isAnnual);
+            document.getElementById('economy-badge').style.opacity = isAnnual ? '1' : '0';
+            document.getElementById('price-1').textContent = isAnnual ? '77' : '97';
+            document.getElementById('price-2').textContent = isAnnual ? '197' : '247';
+            document.getElementById('billing-1').innerHTML = isAnnual ? '<em>R$ 924/ano — economize R$ 240</em>' : '&nbsp;';
+            document.getElementById('billing-2').innerHTML = isAnnual ? '<em>R$ 2.364/ano — economize R$ 600</em>' : '&nbsp;';
+        }
+
+        // FAQ accordion
+        function toggleFaq(btn) {
+            const item = btn.parentElement;
+            const wasOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+            if (!wasOpen) item.classList.add('open');
+        }
+
+        // Scroll reveal
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+        }, { threshold: 0.12 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+</body>
+
+</html>
